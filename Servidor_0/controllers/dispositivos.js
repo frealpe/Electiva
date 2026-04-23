@@ -1,86 +1,85 @@
 const { response, request } = require('express');
+const { Dispositivo } = require('../models');
 
 /**
- * Maneja las peticiones GET para obtener dispositivos.
- * Devuelve un listado de dispositivos de prueba.
- * 
- * @param {request} req - Objeto de petición de Express.
- * @param {response} res - Objeto de respuesta de Express.
+ * Obtiene todos los dispositivos de la base de datos.
  */
-const dispositivosGet = (req = request, res = response) => {
+const dispositivosGet = async (req = request, res = response) => {
+    try {
+        const { limite = 10, desde = 0 } = req.query;
+        
+        // Ejecutamos ambas promesas en paralelo para mayor eficiencia
+        const [ total, dispositivos ] = await Promise.all([
+            Dispositivo.countDocuments(),
+            Dispositivo.find()
+                .skip(Number(desde))
+                .limit(Number(limite))
+        ]);
 
-    const { q, nombre = 'No name', apikey, page = 1, limit } = req.query;
+        res.json({
+            total,
+            dispositivos
+        });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({
+            msg: 'Error al obtener los dispositivos'
+        });
+    }
+}
 
-    res.json({
-        msg: 'get API - dispositivosGet',
-        dispositivos: [
-            {
-                id: 'D0051',
-                nombre: 'Sensor de Temperatura',
-                estado: 'activo',
-                ubicacion: 'Sala de Estar',
-                valor: 24.5
-            },
-            {
-                id: 'D002',
-                nombre: 'Cámara de Seguridad',
-                estado: 'inactivo',
-                ubicacion: 'Entrada Principal',
-                valor: null
-            },
-            {
-                id: 'D003',
-                nombre: 'Termostato Inteligente',
-                estado: 'activo',
-                ubicacion: 'Cocina',
-                valor: 22.0
-            }
-        ],
-        queryParams: {
-            q,
-            nombre,
-            apikey,
-            page, 
-            limit
+/**
+ * Crea un nuevo dispositivo.
+ */
+const dispositivosPost = async (req, res = response) => {
+    try {
+        const { nombre, serie } = req.body;
+        const dispositivo = new Dispositivo({ nombre, serie });
+
+        // Guardar en DB
+        await dispositivo.save();
+
+        res.status(201).json({
+            dispositivo
+        });
+    } catch (error) {
+        console.error(error);
+        res.status(400).json({
+            msg: 'Error al crear el dispositivo. Verifique que el UUID sea único.',
+            error: error.message
+        });
+    }
+}
+
+/**
+ * Actualiza un dispositivo por su ID.
+ */
+const dispositivosPut = async (req, res = response) => {
+    try {
+        const { id } = req.params;
+        const { _id, uuid, ...resto } = req.body;
+
+        // No permitimos cambiar el UUID en el PUT por seguridad/consistencia, 
+        // pero actualizamos el resto de campos.
+        const dispositivo = await Dispositivo.findByIdAndUpdate(id, resto, { new: true });
+
+        if (!dispositivo) {
+            return res.status(404).json({ msg: 'Dispositivo no encontrado' });
         }
-    });
+
+        res.json({
+            dispositivo
+        });
+    } catch (error) {
+        console.error(error);
+        res.status(400).json({
+            msg: 'Error al actualizar el dispositivo'
+        });
+    }
 }
 
 /**
- * Maneja las peticiones POST para registrar un nuevo dispositivo.
- * 
- * @param {request} req - Objeto de petición de Express.
- * @param {response} res - Objeto de respuesta de Express.
- */
-const dispositivosPost = (req, res = response) => {
-
-    const { nombre, tipo } = req.body;
-
-    res.json({
-        msg: 'post API - dispositivosPost',
-        nombre, 
-        tipo
-    });
-}
-
-/**
- * Maneja las peticiones PUT para actualizar un dispositivo por su ID.
- * 
- * @param {request} req - Objeto de petición de Express.
- * @param {response} res - Objeto de respuesta de Express.
- */
-const dispositivosPut = (req, res = response) => {
-
-    const { id } = req.params;
-
-    res.json({
-        msg: 'put API - dispositivosPut',
-        id
-    });
-}
-
-/**
- * Maneja las peticiones PATCH para actualizaciones parciales de dispositivos.
+ * Actualización parcial (PATCH).
  */
 const dispositivosPatch = (req, res = response) => {
     res.json({
@@ -89,12 +88,29 @@ const dispositivosPatch = (req, res = response) => {
 }
 
 /**
- * Maneja las peticiones DELETE para eliminar un dispositivo.
+ * Elimina un dispositivo.
  */
-const dispositivosDelete = (req, res = response) => {
-    res.json({
-        msg: 'delete API - dispositivosDelete'
-    });
+const dispositivosDelete = async (req, res = response) => {
+    try {
+        const { id } = req.params;
+        
+        // Eliminación física
+        const dispositivo = await Dispositivo.findByIdAndDelete(id);
+
+        if (!dispositivo) {
+            return res.status(404).json({ msg: 'Dispositivo no encontrado' });
+        }
+
+        res.json({
+            msg: 'Dispositivo eliminado',
+            dispositivo
+        });
+    } catch (error) {
+        console.error(error);
+        res.status(400).json({
+            msg: 'Error al eliminar el dispositivo'
+        });
+    }
 }
 
 module.exports = {
