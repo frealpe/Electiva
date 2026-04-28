@@ -6,10 +6,15 @@ const DatoSchema = Schema({
         required: [true, 'El UUID del dispositivo es obligatorio'],
         ref: 'Dispositivo' // Opcional: permite usar populate si se busca por uuid manualmente
     },
-    valor: {
+    temp: {
         type: Number,
         required: [true, 'El valor del sensor es obligatorio']
     },
+    hum: {
+        type: Number,
+        required: [true, 'El valor del sensor es obligatorio']
+    },
+
     fecha_insercion: {
         type: Date,
         default: Date.now

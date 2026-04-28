@@ -35,7 +35,7 @@ const datosGet = async (req = request, res = response) => {
  */
 const datosPost = async (req, res = response) => {
     try {
-        const { dispositivo_uuid, valor } = req.body;
+        const { dispositivo_uuid, temp,hum } = req.body;
 
         // Opcional: Verificar que el dispositivo exista
         const existeDispositivo = await Dispositivo.findOne({ uuid: dispositivo_uuid });
@@ -45,7 +45,7 @@ const datosPost = async (req, res = response) => {
             });
         }
 
-        const dato = new Dato({ dispositivo_uuid, valor });
+        const dato = new Dato({ dispositivo_uuid, temp,hum });
 
         // Guardar en DB
         await dato.save();
