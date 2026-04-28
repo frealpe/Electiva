@@ -51,6 +51,7 @@ void setup() {
   wifi_setup();
 
   log("[ INFO ] Setup completado");
+  logMemory();
 }
 // -------------------------------------------------------------------
 // Loop Principal

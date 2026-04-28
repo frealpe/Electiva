@@ -50,8 +50,8 @@ boolean settingsRead() {
   // Forzar configuración nueva para solucionar problemas de persistencia
   strlcpy(wifi_ssid, "NICOLAS", sizeof(wifi_ssid));
   strlcpy(wifi_password, "nicolas1308", sizeof(wifi_password));
-  strlcpy(mqtt_server, "192.168.20.17", sizeof(mqtt_server));
-  strlcpy(mqtt_cloud_id, "34d07759-1a9d-479e-af1e-a5080d0b582a", sizeof(mqtt_cloud_id));
+  strlcpy(mqtt_server, "192.168.20.20", sizeof(mqtt_server));
+  strlcpy(mqtt_cloud_id, "452d7611-c6b5-44ab-96ee-8db646d875ad", sizeof(mqtt_cloud_id));
   mqtt_time_interval = 5000;
   wifi_ip_static = false;
 
@@ -79,8 +79,8 @@ void settingsReset() {
   mqtt_cloud_enable = true;
   strlcpy(mqtt_user, "plcuser", sizeof(mqtt_user));
   strlcpy(mqtt_password, "plc", sizeof(mqtt_password));
-  strlcpy(mqtt_server, "192.168.20.17", sizeof(mqtt_server));
-  strlcpy(mqtt_cloud_id, "34d07759-1a9d-479e-af1e-a5080d0b582a", sizeof(mqtt_cloud_id));
+  strlcpy(mqtt_server, "192.168.20.20", sizeof(mqtt_server));
+  strlcpy(mqtt_cloud_id, "452d7611-c6b5-44ab-96ee-8db646d875ad", sizeof(mqtt_cloud_id));
   mqtt_port = 1883;
   mqtt_retain = false;
   mqtt_qos = 0;
@@ -89,7 +89,7 @@ void settingsReset() {
   mqtt_time_unit = 1;
   mqtt_status_send = true;
   strlcpy(mqtt_topic_publish, "Plc/Esp32", sizeof(mqtt_topic_publish));
-  strlcpy(mqtt_topic_subscribe, "Plc/Esp32/cmd", sizeof(mqtt_topic_subscribe));
+  strlcpy(mqtt_topic_subscribe, "Plc/Esp32", sizeof(mqtt_topic_subscribe));
   strlcpy(mqtt_custom_message, "", sizeof(mqtt_custom_message));
 }
 

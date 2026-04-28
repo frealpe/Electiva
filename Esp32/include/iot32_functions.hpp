@@ -7,6 +7,15 @@
 // -------------------------------------------------------------------
 void log(String s) { Serial.println(s); }
 // -------------------------------------------------------------------
+// Comprobar Memoria del ESP32
+// -------------------------------------------------------------------
+void logMemory() {
+  log("[ MEM ] Free Heap: " + String(ESP.getFreeHeap()) + " bytes");
+  log("[ MEM ] Max Alloc Heap: " + String(ESP.getMaxAllocHeap()) + " bytes");
+  log("[ MEM ] Min Free Heap: " + String(ESP.getMinFreeHeap()) + " bytes");
+  log("[ MEM ] Flash Size: " + String(ESP.getFlashChipSize()) + " bytes");
+}
+// -------------------------------------------------------------------
 // Definir la Plataforma
 // -------------------------------------------------------------------
 String platform() {
